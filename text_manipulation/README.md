@@ -11,5 +11,5 @@ awk '{print $1}'
 
 ## Print variable in sed command
 ```
-sed -i "s/$var1/ZZ/g" "$file"
+sed -i "s/$var1/ZZ/" "$file"
 ```
