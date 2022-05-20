@@ -13,3 +13,8 @@ awk '{print $1}'
 ```
 sed -i "s/$var1/ZZ/" "$file"
 ```
+
+## Replace space with underscore
+```
+sed -e 's/ /_/g'
+```
