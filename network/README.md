@@ -1,3 +1,10 @@
+## Display current IP
+```
+ip a
+or
+ip a | grep eth0
+```
+
 ## Display DNS server IP local
 ```git
 cat /etc/resolv.conf
