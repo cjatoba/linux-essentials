@@ -1,11 +1,11 @@
-## Entrar e Sair
+## Enter and leave
 
 ```
 vi arquivo.txt <ENTER>
 :q <ENTER>
 ```
   
-## Entrar, Inserir Texto, Salvar e Sair
+## Enter, insert text, save and leave
 
 ```
 vi arquivo.txt <ENTER>
@@ -15,7 +15,7 @@ Minha primeira frase no VI.
 :wq <ENTER>
 ```
   
-## Entrar, Alterar Texto e Sair sem Salvar
+## Enter, change text and leave without save
 
 ```
 vi arquivo.txt <ENTER>
@@ -23,7 +23,7 @@ dd
 :q! <ENTER>
 ```
   
-## Entrar, Alterar Texto, Salvar em Outro Arquivo e Sair
+## Enter, change text, save in other file and leave
   
 ```
 vi arquivo.txt <ENTER>
@@ -33,7 +33,7 @@ p
 :q <ENTER>
 ```
   
-## Configurar o vi
+## Setting vi
 
 ```
 vi ~/.vimrc <ENTER>
@@ -44,7 +44,7 @@ set ic is hls scs
 :wq <ENTER>
 ```
   
-## Repetir a Primeira Linha 2 Vezes e Apagar a Última
+## Repeat first line twice and delete last line
 
 ```
 vi arquivo.txt <ENTER>
@@ -56,7 +56,7 @@ G
 dd
 ```
 
-##Repetir Comandos
+## Repeat commands
 
 ```
 vi arquivo.txt <ENTER>
@@ -69,7 +69,7 @@ j
 .
 ```
   
-## Abrir Dois Arquivos Simultaneamente
+## Open two files simultaneosly
 
 ```
 vi arquivo.txt <ENTER>
@@ -80,14 +80,14 @@ Ctrl+W
 :q <ENTER>
 ```
   
-## Obter Ajuda
+## Help
 
 ```
 vi arquivo.txt <ENTER>
 :help <ENTER>
 ```
 
-## Comandos de Arquivo
+## Commands for files
 
 ```
 :q	Sai do vi
@@ -99,7 +99,7 @@ vi arquivo.txt <ENTER>
 :e abc	Edita o arquivo 'abc'
 ```
   
-## Modo de Inserção
+## Insert mode
   
 ```
 i	Entra no modo de Inserção
@@ -108,7 +108,7 @@ o	Entra no modo de Inserção, em uma nova linha
 <ESC>	Sai do modo de Inserção
 ```
   
-## Copiar, Cortar e Colar
+## Copy, cut e paste
   
 ```
 yy	Copia a linha inteira
@@ -121,7 +121,7 @@ p	Cola o trecho copiado ou apagado
 V	Seleção visual de linhas
 ```
   
-## Pulos
+## Jumping
   
 ```
 gg	Pula para a primeira linha
@@ -137,7 +137,7 @@ f.	Pula até o próximo ponto (.), na mesma linha
 ``	Desfaz o pulo, volta
 ```
   
-## Apagando com esperteza
+## Erasing smartly
   
 ```
 dgg	Apaga até o início do arquivo
@@ -148,7 +148,7 @@ df.	Apaga até o próximo ponto
 d)	Apaga até o fim da frase
 ```
   
-## Outros
+## Others
   
 ```
 J	Junta a próxima linha com a atual
@@ -163,4 +163,4 @@ n	Vai para o próximo resultado da pesquisa
 :r!cmd	Insere o resultado do comando externo 'cmd'
 ```
   
-Fonte: https://aurelio.net/curso/material/vim-ref.html
+Source: https://aurelio.net/curso/material/vim-ref.html
