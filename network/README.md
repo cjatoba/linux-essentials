@@ -3,6 +3,8 @@
 ip a
 or
 ip a | grep eth0
+or
+ip addr show
 ```
 
 ## Display DNS server IP local
