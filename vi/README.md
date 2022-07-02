@@ -44,7 +44,7 @@ set ic is hls scs
 :wq <ENTER>
 ```
   
-## Repeat first line twice and delete last line
+## Repeat first line twice and erase last line
 
 ```
 vi arquivo.txt <ENTER>
