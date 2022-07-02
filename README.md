@@ -1,2 +1,2 @@
 # linux-essentials
-Useful linux commands for daly
+Useful linux commands for daily
