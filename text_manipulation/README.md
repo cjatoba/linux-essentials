@@ -18,3 +18,13 @@ sed -i "s/$var1/ZZ/" "$file"
 ```
 sed -e 's/ /_/g'
 ```
+
+## Convert Lowercase Characters
+```
+rename -v 'y/a-z/A-Z/' *.txt
+```
+
+## Convert Uppercase Characters
+```
+rename -v 'y/A-Z/a-z/' *.TXT
+```
