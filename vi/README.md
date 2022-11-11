@@ -1,16 +1,16 @@
 ## Enter and leave
 
 ```
-vi arquivo.txt <ENTER>
+vi file.txt <ENTER>
 :q <ENTER>
 ```
   
 ## Enter, insert text, save and leave
 
 ```
-vi arquivo.txt <ENTER>
+vi file.txt <ENTER>
 i
-Minha primeira frase no VI.
+My first text in VI.
 <ESC>
 :wq <ENTER>
 ```
@@ -18,7 +18,7 @@ Minha primeira frase no VI.
 ## Enter, change text and leave without save
 
 ```
-vi arquivo.txt <ENTER>
+vi file.txt <ENTER>
 dd
 :q! <ENTER>
 ```
@@ -26,10 +26,10 @@ dd
 ## Enter, change text, save in other file and leave
   
 ```
-vi arquivo.txt <ENTER>
+vi file.txt <ENTER>
 yy
 p
-:w arquivo-novo.txt <ENTER>
+:w new-file.txt <ENTER>
 :q <ENTER>
 ```
   
@@ -47,7 +47,7 @@ set ic is hls scs
 ## Repeat first line twice and erase last line
 
 ```
-vi arquivo.txt <ENTER>
+vi file.txt <ENTER>
 gg
 yy
 p
@@ -61,7 +61,7 @@ dd
 ```
 vi arquivo.txt <ENTER>
 A
-FIM
+END
 <ESC>
 j
 .
@@ -69,10 +69,10 @@ j
 .
 ```
   
-## Open two files simultaneosly
+## Open two files simultaneosly with split
 
 ```
-vi arquivo.txt <ENTER>
+vi file.txt <ENTER>
 :split ~/.vimrc <ENTER>
 Ctrl+W
 Ctrl+W
@@ -83,58 +83,58 @@ Ctrl+W
 ## Help
 
 ```
-vi arquivo.txt <ENTER>
+vi file.txt <ENTER>
 :help <ENTER>
 ```
 
 ## Commands for files
 
 ```
-:q	Sai do vi
-:w	Salva alteraçoes feitas
-:wq	Salva aterações e sai do VI
-:q!	Sai sem salvar
-:w abc	Grava arquivo com o nome 'abc'
-:r abc	Insere o conteúdo do arquivo 'abc'
-:e abc	Edita o arquivo 'abc'
+:q	Exit
+:w	Save changes
+:wq	Save e exit
+:q!	Exit without save
+:w abc	Record file with name 'abc'
+:r abc	Insert file 'abc' content
+:e abc	Edit file 'abc'
 ```
   
 ## Insert mode
   
 ```
-i	Entra no modo de Inserção
-a	Entra no modo de Inserção, após o cursor
-o	Entra no modo de Inserção, em uma nova linha
-<ESC>	Sai do modo de Inserção
+i	Enter in insert mode
+a	Enter in insert mode, after cursor
+o	Enter in insert mode, in new line
+<ESC>	Exit to insert mode
 ```
   
 ## Copy, cut e paste
   
 ```
-yy	Copia a linha inteira
-5yy	Copia as 5 próximas linhas
-dd	Apaga a linha
-5dd	Apaga 5 linhas
-x	Apaga uma letra
-5x	Apaga 5 letras
-p	Cola o trecho copiado ou apagado
-V	Seleção visual de linhas
+yy	Copy entire line
+5yy	Copy next 5 lines
+dd	Erase line
+5dd	Erase 5 lines
+x	Erase one letter
+5x	Erase 5 letters
+p	Paste copied text
+V	Visual line selection
 ```
   
 ## Jumping
   
 ```
-gg	Pula para a primeira linha
-G	Pula para a última linha
-44G	Pula para a linha número 44
-w	Pula para a próxima palavra
-b	Pula para a palavra anterior
-{	Pula para o parágrafo anterior
-}	Pula para o próximo parágrafo
-(	Pula para a frase anterior
-)	Pula para a próxima frase
-f.	Pula até o próximo ponto (.), na mesma linha
-``	Desfaz o pulo, volta
+gg	Jump for first line
+G	Jump for last line
+44G	Jump for line 44
+w	Jump for next word
+b	Jump for previous word
+{	Jump for previous paragraph
+}	Jump for next paragraph
+(	Jump for previous phrase
+)	Jump for next phrase
+f.	Jump for next dot (.) on the same line
+``	Undo jump
 ```
   
 ## Erasing smartly
