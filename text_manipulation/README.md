@@ -26,7 +26,7 @@ sed -n '/2022-11-10/{p;q;}' file.txt
 
 ## Returns the last occurrence of a pattern
 ```bash
-sed -n '/2022-11-10/h;${x;p;}' file.tct
+sed -n '/2022-11-10/h;${x;p;}' file.txt
 ```
 
 ## Convert Lowercase Characters
