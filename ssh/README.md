@@ -1,7 +1,7 @@
 ## SSH key generate
 
 ```bash
-ssh-keygen -t rsa -C "your_email@example.com"
+ ssh-keygen -t ed25519 -C "your_email@example.com"
 
 #Or in Old Systems
 
@@ -13,7 +13,7 @@ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
 - Generate your secondary ssh key:
 
 ```bash
-ssh-keygen -t rsa -C "your_secondary_email@example.com"
+ ssh-keygen -t ed25519 -C "your_secondary_email@example.com"
 ```
 
 - Insert path and new name for secondary ssh key (Replace your_user_name with your real username):
@@ -57,4 +57,10 @@ ssh user@10.0.1.1 -p 3456
 
 ```bash
 ssh -X user@10.0.1.1
+```
+
+## SSH test connection:
+
+```bash
+ssh -T git@github.com
 ```
