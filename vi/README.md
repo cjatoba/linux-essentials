@@ -162,5 +162,3 @@ n	Vai para o próximo resultado da pesquisa
 :!cmd	Executa o comando externo 'cmd'
 :r!cmd	Insere o resultado do comando externo 'cmd'
 ```
-  
-Source: https://aurelio.net/curso/material/vim-ref.html
