@@ -1,11 +1,11 @@
 ## List kernels
 
 ```shell
-apt list --installed | grep linux-image
+dpkg -l | grep linux-image
 ```
 
 ## Remove kernel
 
 ```shell
-sudo apt remove kernel-name
+sudo apt purge linux-image-name
 ```
