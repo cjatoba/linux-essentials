@@ -26,5 +26,3 @@ scp -r /pasta-local/ user@domain:/pasta-remota/
 ```bash
 scp -r user@domain:/pasta-remota user@domain:/pasta-remota/
 ```
-
-Fonte: https://udgwebdev.github.io/dicas-de-terminal-copiando-arquivos-via-scp/
