@@ -1,6 +1,6 @@
 ## Add fingerprint unlock in XFCE
 
-### Install fprintd and libpam-fprintd
+### Install `fprintd` and `libpam-fprintd`
 
 ```bash
 sudo apt install fprintd libpam-fprintd
