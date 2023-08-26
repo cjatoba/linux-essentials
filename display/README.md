@@ -20,3 +20,11 @@ Output example:
 ```bash
 xrandr --addmode HDMI-1 2560x1080_53.92
 ```
+
+- To persist the configuration edit the `/etc/X11/xorg.conf` file (Create if not exists) and add this content:
+```bash
+Section "Monitor"
+	Identifier "HDMI-1"
+	Modeline "2560x1080_53.92" 162.5 2560 2608 2640 2720 1080 1083 1093 1108 +HSync -VSync
+EndSection
+```
