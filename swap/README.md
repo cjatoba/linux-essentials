@@ -27,5 +27,5 @@ vm.swappiness=10
 
 ### Apply configuration
 ```bash
-sysctl -p /etc/sysctl.conf
+sudo sysctl -p /etc/sysctl.conf
 ```
