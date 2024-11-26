@@ -1,24 +1,34 @@
-# How to add fingerprint unlock in XFCE
+# Fingerprint tips
 
-## Install `fprintd` and `libpam-fprintd`
+## How to enable fingerprint on Ubuntu terminal
+
+```bash
+sudo pam-auth-update
+```
+
+In `Pam profile to enable` area select `Fingerprint authentication` option.
+
+## How to add fingerprint unlock in XFCE
+
+### Install `fprintd` and `libpam-fprintd`
 
 ```bash
 sudo apt install fprintd libpam-fprintd
 ```
 
-## Register fingerprint
+### Register fingerprint
 
 ```bash
 fprintd-enroll <USERNAME>
 ```
 
-## Verify fingerprint
+### Verify fingerprint
 
 ```bash
 fprintd-verify <USERNAME>
 ```
 
-## System Configuration
+### System Configuration
 
 Edit `/etc/pam.d/common-auth file` add `auth sufficient pam_fprintd.so` after `# here are the per-package modules (the "Primary" block)` line
 ```bash
