@@ -3,9 +3,9 @@
 swapon --show 
 ```
 
-## Disable swap status
+## Disable swap
 ```bash
-swapoff -a 
+sudo swapoff -a 
 ```
 
 ## Check swappiness configuration
