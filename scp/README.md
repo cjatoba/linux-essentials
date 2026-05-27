@@ -1,28 +1,29 @@
-## Copiando um arquivo remoto para máquina local:
+## Copying a remote file to local machine:
+
 ```bash
-scp user@domain:/pasta-remota/arquivo-remoto.txt /pasta-local/arquivo-local.txt
+scp user@domain:/remote-folder/remote-file.txt /local-folder/local-file.txt
 ```
 
-## Enviando um arquivo local para um servidor remoto:
+## Sending a local file to a remote server:
 
 ```bash
-scp /pasta-local/arquivo-local.txt user@domain:/pasta-remota/arquivo-remoto.txt
+scp /local-folder/local-file.txt user@domain:/remote-folder/remote-file.txt
 ```
 
-## Copiando pastas e subpastas do servidor remoto para máquina local:
+## Copying folders and subfolders from remote server to local machine:
 
 ```bash
-scp -r user@domain:/pasta-remota/ /pasta-local/
+scp -r user@domain:/remote-folder/ /local-folder/
 ```
 
-## Enviando pastas e subpastas da máquina local para o servidor remoto:
+## Sending folders and subfolders from local machine to remote server:
 
 ```bash
-scp -r /pasta-local/ user@domain:/pasta-remota/
+scp -r /local-folder/ user@domain:/remote-folder/
 ```
 
-## Enviando pastas e subpastas de máquina remota para um servidor remoto:
+## Sending folders and subfolders from remote machine to another remote server:
 
 ```bash
-scp -r user@domain:/pasta-remota user@domain:/pasta-remota/
+scp -r user@domain:/remote-folder user@domain:/remote-folder/
 ```
