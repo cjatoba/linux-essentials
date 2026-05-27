@@ -1,90 +1,90 @@
-# [Fix] Linux: áudio some após pausa ou troca de aplicativo — PipeWire suspende dispositivos ALSA automaticamente (WirePlumber suspend-timeout)
+# [Fix] Linux audio disappears after inactivity — PipeWire automatically suspends ALSA devices (WirePlumber suspend-timeout)
 
-**Palavras-chave:** linux sem áudio, dispositivos de áudio desaparecem, nenhum dispositivo de áudio encontrado, pipewire suspend, wireplumber suspend-timeout, áudio para de funcionar linux, chrome sem áudio linux, teams sem áudio linux, áudio some após inatividade, wpctl status vazio, alsa suspended
-
----
-
-## O problema
-
-Em sistemas Linux com PipeWire, os dispositivos de áudio podem desaparecer das configurações do sistema e o áudio parar de funcionar após um período de inatividade. Isso pode ocorrer em diferentes situações:
-
-- Pausar um vídeo no Chrome por alguns segundos e retomar
-- Sair de uma reunião no Teams e entrar em outra
-- Trocar de aba ou aplicativo enquanto áudio estava ativo
-- Qualquer cenário onde o stream de áudio é interrompido brevemente
+**Keywords:** linux no audio, audio devices disappear, no audio device found, pipewire suspend, wireplumber suspend-timeout, audio stops working linux, chrome no audio linux, teams no audio linux, audio gone after inactivity, wpctl status empty, alsa suspended
 
 ---
 
-## Por que isso acontece
+## The problem
 
-### A suspensão automática é comportamento padrão
+On Linux systems running PipeWire, audio devices can disappear from system settings and audio can stop working after a brief period of inactivity. This can happen in different situations:
 
-A suspensão de dispositivos de áudio é um recurso **intencional e ativo por padrão** no WirePlumber (o gerenciador de sessão do PipeWire). Trata-se de uma medida de economia de energia: manter um dispositivo de áudio aberto consome CPU continuamente — o driver ALSA fica em loop processando buffers mesmo sem nenhum som sendo reproduzido. Em notebooks com bateria isso tem impacto real.
-
-O WirePlumber monitora todos os nós de áudio e, após **5 segundos sem nenhum stream ativo**, envia um comando `Suspend` ao dispositivo, colocando o driver ALSA em estado de baixo consumo.
-
-### Por que o áudio não restaura automaticamente
-
-Em teoria, o PipeWire deveria acordar o dispositivo automaticamente quando um novo stream tentasse usá-lo. Na prática, isso falha em aplicações como Chrome e Teams por uma combinação de razões:
-
-1. **Cache de estado corrompido:** quando o Chrome ou Teams conecta ao dispositivo de áudio, ele guarda internamente o estado daquela conexão. Quando o dispositivo é suspenso, a conexão não é encerrada formalmente — ela fica em estado corrompido. Ao retomar o vídeo ou entrar em uma nova reunião, a aplicação tenta usar a conexão antiga em vez de abrir uma nova.
-
-2. **Camada de compatibilidade:** Chrome e Teams se comunicam com o PipeWire via API PulseAudio (através do `pipewire-pulse`). Essa camada de compatibilidade nem sempre propaga corretamente os eventos de suspend/resume para a aplicação, que então não sabe que precisa reconectar.
-
-3. **Condição de corrida:** quando o usuário retoma o conteúdo, a aplicação envia áudio ao PipeWire antes que o dispositivo termine de acordar. Esse envio falha silenciosamente e a aplicação não tenta novamente.
-
-### Por que os dispositivos desapareciam das configurações de áudio
-
-A suspensão por si só não remove os dispositivos da lista. O que causava o desaparecimento era uma consequência em cascata:
-
-1. Dispositivo entra em idle → WirePlumber suspende após 5 segundos
-2. Chrome ou Teams tenta usar o áudio e falha ao comunicar com o dispositivo suspenso
-3. O aplicativo começa a enviar erros repetidos para o `pipewire-pulse`
-4. O `pipewire-pulse` entra em estado corrompido
-5. O GNOME Configurações consulta os dispositivos via `pipewire-pulse` — que nesse estado responde com lista vazia
-6. Resultado: nenhum dispositivo exibido nas configurações, mesmo com o PipeWire ainda rodando
-
-Os dispositivos não desapareciam do PipeWire em si, mas a camada de compatibilidade que faz a ponte com o GNOME estava corrompida e não os reportava corretamente. Por isso reiniciar apenas o Chrome ou o Teams não resolvia — era necessário reiniciar os serviços de áudio ou o sistema.
+- Pausing a video in Chrome for a few seconds and resuming
+- Leaving a Teams meeting and joining another one
+- Switching tabs or applications while audio was active
+- Any scenario where the audio stream is briefly interrupted
 
 ---
 
-## A solução
+## Why this happens
 
-A correção desabilita a suspensão automática para todos os dispositivos ALSA via uma regra do WirePlumber, usando a propriedade correta que o sistema lê internamente.
+### Device suspension is default behavior
 
-> **Atenção:** a propriedade correta é `session.suspend-timeout-seconds`. Uma tentativa comum é usar `session.suspend-timeout` (sem o `-seconds`), mas o script interno do WirePlumber (`suspend-node.lua`) lê apenas a versão com sufixo — o valor é ignorado e o suspend continua ocorrendo.
+Automatic audio device suspension is an **intentional feature, enabled by default** in WirePlumber (the PipeWire session manager). It is a power-saving measure: keeping an audio device open continuously consumes CPU — the ALSA driver stays in a processing loop even when no sound is being played. On battery-powered laptops this has a real impact.
+
+WirePlumber monitors all audio nodes and, after **5 seconds with no active stream**, sends a `Suspend` command to the device, putting the ALSA driver into a low-power state.
+
+### Why audio does not restore automatically
+
+In theory, PipeWire should wake the device automatically when a new stream tries to use it. In practice, this fails in applications like Chrome and Teams due to a combination of reasons:
+
+1. **Corrupted state cache:** when Chrome or Teams connects to the audio device, it stores the connection state internally. When the device is suspended, the connection is not formally terminated — it remains in a corrupted state. When the user resumes the video or joins a new meeting, the application tries to reuse the old (broken) connection instead of opening a new one.
+
+2. **Compatibility layer:** Chrome and Teams communicate with PipeWire via the PulseAudio API (through `pipewire-pulse`). This compatibility layer does not always properly propagate suspend/resume events to the application, which then does not know it needs to reconnect.
+
+3. **Race condition:** when the user resumes content, the application sends audio to PipeWire before the device finishes waking up. This send silently fails and the application does not retry.
+
+### Why devices disappeared from audio settings
+
+Suspension alone does not remove devices from the list. What caused the disappearance was a cascade of failures:
+
+1. Device goes idle → WirePlumber suspends after 5 seconds
+2. Chrome or Teams tries to use audio and fails to communicate with the suspended device
+3. The application starts sending repeated errors to `pipewire-pulse`
+4. `pipewire-pulse` enters a corrupted state
+5. GNOME Settings queries devices via `pipewire-pulse` — which in that state responds with an empty list
+6. Result: no devices shown in settings, even though PipeWire is still running
+
+The devices did not disappear from PipeWire itself, but the compatibility layer bridging PipeWire to GNOME was corrupted and no longer reported them correctly. This is why restarting only Chrome or Teams did not fix it — the problem was in `pipewire-pulse`, and was only resolved by restarting the audio services or rebooting.
 
 ---
 
-## Pré-requisito: verificar se o sistema usa PipeWire + WirePlumber
+## The solution
+
+The fix disables automatic suspension for all ALSA devices via a WirePlumber rule, using the correct property name the system reads internally.
+
+> **Important:** the correct property name is `session.suspend-timeout-seconds`. A common mistake is using `session.suspend-timeout` (without the `-seconds` suffix), but the WirePlumber suspend script (`suspend-node.lua`) only reads the suffixed version — the value is ignored and suspension continues.
+
+---
+
+## Prerequisite: verify the system uses PipeWire + WirePlumber
 
 ```bash
 systemctl --user status pipewire wireplumber
 ```
 
-Se ambos aparecerem como `active (running)`, esta solução se aplica. Para verificar as versões instaladas:
+If both appear as `active (running)`, this solution applies. To check the installed versions:
 
 ```bash
 pipewire --version
 wireplumber --version
 ```
 
-> Esta solução foi testada no WirePlumber 0.4.x. Em versões anteriores o mecanismo de suspend pode ser diferente.
+> This solution was tested on WirePlumber 0.4.x. On older versions the suspend mechanism may differ.
 
 ---
 
-## Passos para correção
+## Steps
 
-### 1. Remover configs incorretos (se existirem)
+### 1. Remove incorrect configs (if they exist)
 
 ```bash
 rm -f ~/.config/pipewire/pipewire.conf.d/disable-suspend.conf
 rm -f ~/.config/pipewire/pipewire.conf.d/usb-stable.conf
 ```
 
-> **Atenção:** não coloque `libpipewire-module-protocol-pulse` em configs do processo principal do PipeWire — esse módulo já é carregado pelo `pipewire-pulse.service` e causa conflito de socket, derrubando o stack de áudio completamente.
+> **Warning:** do not place `libpipewire-module-protocol-pulse` in configs for the main PipeWire process — this module is already loaded by `pipewire-pulse.service` and causes a socket conflict, taking down the entire audio stack.
 
-### 2. Criar o config correto no WirePlumber
+### 2. Create the correct WirePlumber config
 
 ```bash
 mkdir -p ~/.config/wireplumber/main.lua.d
@@ -103,20 +103,20 @@ table.insert(alsa_monitor.rules, {
 EOF
 ```
 
-### 3. Reiniciar os serviços
+### 3. Restart the services
 
 ```bash
 systemctl --user reset-failed
 systemctl --user restart pipewire pipewire-pulse wireplumber
 ```
 
-### 4. Verificar que está funcionando
+### 4. Verify it is working
 
 ```bash
 wpctl status
 ```
 
-O comando deve listar os dispositivos de áudio normalmente:
+The command should list audio devices normally:
 
 ```
 Audio
@@ -126,50 +126,50 @@ Audio
  │  *   XX. Built-in Audio Analog Stereo   [vol: 1.00]
 ```
 
-Se a lista aparecer vazia, execute `journalctl --user -u wireplumber -n 30` para verificar erros.
+If the list is empty, run `journalctl --user -u wireplumber -n 30` to check for errors.
 
-### 5. Reiniciar aplicativos de áudio
+### 5. Restart audio applications
 
-Após aplicar a correção, reinicie o Chrome, Teams ou qualquer outro aplicativo de áudio — eles não reconectam ao dispositivo automaticamente se já estavam com o stream corrompido.
+After applying the fix, restart Chrome, Teams, or any other audio application — they do not automatically reconnect to the device if the stream was already in a broken state.
 
 ---
 
-## Como a solução funciona
+## How the solution works
 
-### O que o script Lua faz — linha a linha
+### What the Lua script does — line by line
 
 ```lua
 table.insert(alsa_monitor.rules, {
 ```
-`alsa_monitor.rules` é a lista de regras de comportamento do WirePlumber para dispositivos ALSA. O `table.insert` adiciona uma nova regra ao final dessa lista sem apagar as regras existentes do sistema.
+`alsa_monitor.rules` is the list of behavior rules WirePlumber maintains for ALSA devices. `table.insert` appends a new rule to the end of that list without removing existing system rules.
 
 ```lua
   matches = {
     {
 ```
-Define as condições para a regra ser aplicada. O nível duplo de chaves existe porque é possível ter múltiplos grupos de condições — se qualquer grupo bater, a regra é aplicada. Aqui há apenas um grupo.
+Defines the conditions for the rule to be applied. The double nesting exists because multiple condition groups are supported — if any group matches, the rule is applied. Here there is only one group.
 
 ```lua
       { "node.name", "matches", "alsa_*" },
 ```
-A condição: três elementos — a propriedade a verificar (`node.name`), o operador (`matches`, que aceita padrão glob), e o valor (`alsa_*`). O asterisco é um curinga que representa qualquer texto. Isso aplica a regra a **todos os dispositivos de áudio ALSA da máquina**, sem precisar conhecer o nome do hardware específico.
+The condition itself: three elements — the property to check (`node.name`), the operator (`matches`, which accepts glob patterns), and the value (`alsa_*`). The asterisk is a wildcard representing any text. This applies the rule to **all ALSA audio devices on the machine**, without needing to know the specific hardware name.
 
 ```lua
   apply_properties = {
     ["session.suspend-timeout-seconds"] = 0,
   },
 ```
-Define o que fazer nos nós que baterem com as condições: aplicar a propriedade `session.suspend-timeout-seconds` com valor `0`. É exatamente essa propriedade que o `suspend-node.lua` do WirePlumber consulta antes de suspender um dispositivo. Quando o valor é `0`, o script descarta a suspensão e não agenda nenhum timer.
+Defines what to do on nodes that match the conditions: apply the property `session.suspend-timeout-seconds` with value `0`. This is exactly the property the WirePlumber internal script `suspend-node.lua` checks before suspending a device. When the value is `0`, the script skips suspension and schedules no timer.
 
-### Quando o script é executado e como a configuração persiste
+### When the script runs and how the config persists
 
-O script **não é executado uma única vez** — ele é carregado e executado pelo WirePlumber toda vez que o serviço inicia:
+The script is **not executed once** — it is loaded and executed by WirePlumber every time the service starts:
 
-1. Sistema liga ou WirePlumber é reiniciado
-2. WirePlumber carrega todos os arquivos `.lua` de `main.lua.d/` — tanto os do sistema (`/usr/share/wireplumber/main.lua.d/`) quanto os do usuário (`~/.config/wireplumber/main.lua.d/`)
-3. O script é executado, inserindo a regra na lista `alsa_monitor.rules`
-4. Sempre que um novo dispositivo ALSA é detectado, o WirePlumber percorre todas as regras e aplica as propriedades nos dispositivos que batem com as condições
+1. System boots or `systemctl --user restart wireplumber` is run
+2. WirePlumber loads all `.lua` files from `main.lua.d/` — both system ones (`/usr/share/wireplumber/main.lua.d/`) and user ones (`~/.config/wireplumber/main.lua.d/`)
+3. The script runs, inserting the rule into `alsa_monitor.rules`
+4. Whenever a new ALSA device is detected, WirePlumber iterates through all rules and applies properties to matching devices
 
-A configuração **não é gravada no dispositivo nem no kernel** — ela existe apenas enquanto o WirePlumber está rodando. O que persiste é o arquivo `.lua` em `~/.config/wireplumber/main.lua.d/51-disable-suspend.lua`. Por estar nessa pasta, ele é carregado automaticamente em todo boot, tornando o comportamento permanente enquanto o arquivo existir.
+The configuration is **not written to the device or the kernel** — it only exists while WirePlumber is running. What persists is the `.lua` file at `~/.config/wireplumber/main.lua.d/51-disable-suspend.lua`. Because it is in that folder, it is loaded automatically on every boot, making the behavior permanent as long as the file exists.
 
-Se o arquivo for removido e o WirePlumber reiniciado, o suspend voltaria a funcionar com o comportamento padrão de 5 segundos.
+If the file is removed and WirePlumber restarted, suspension would return to the default 5-second behavior.
